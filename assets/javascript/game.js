@@ -12,32 +12,25 @@ $(document).ready(function () {
 	firebase.initializeApp(config);
 
 	var database = firebase.database();
-	var numOfCols = 6;
-	// var nextTrain = "";
-	// var minutesAway = "";
-
-	// function minutesAway(){
-	// 	nextTrain;
-	// };
-
-	// function nextTrain(){
-	// 	minutesAway;	
-	// };
+	var numOfCols = 5;
 
 	database.ref().on("child_added", function(snapshot, prevChildKey){
 		event.preventDefault();
 		var newTrain = snapshot.val();
-		// nextTrain = nextTrain();
-		// minutesAway = minutesAway();
-		console.log(moment().hour() + ":" +moment().minutes());
+		
+		var TimeConverted = moment(newTrain.UIFirstTrainTime, "hh:mm").subtract(1, "years");
+		var currentTime = moment(currentTime).format("hh:mm a");
+		var diffInTime = moment().diff(moment(TimeConverted), "minutes");
+		var TimeRemaining = diffInTime % newTrain.UIFrequency;
+		var TimeTilArrival = newTrain.UIFrequency - TimeRemaining
+		var nextTrain = moment().add(TimeTilArrival, "minutes")
 
 		TrainDataArray = [];
 		TrainDataArray.push(newTrain.UITrainName);
 		TrainDataArray.push(newTrain.UIDestination);
-		TrainDataArray.push(newTrain.UIFirstTrainTime + " am");
 		TrainDataArray.push(newTrain.UIFrequency + " minutes");
-		// TrainDataArray.push(nextTrain);
-		// TrainDataArray.push(minutesAway + " minutes away");
+		TrainDataArray.push(moment(nextTrain).format("hh:mm a"));
+		TrainDataArray.push(TimeTilArrival + " minutes away");
 
 	
 		// TrainDataArray.push(newTrain.minutes)
